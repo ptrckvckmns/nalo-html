@@ -1,0 +1,129 @@
+<!DOCTYPE html><html data-lt-installed="true" lang="de"><head><title>NALO_DRAW-2563_Euromillions SMJG Feb 2026_de</title><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="initial-scale=1"><meta name="robots" content="noindex"><meta name="description" content="NALO Euromillions SMJG Feb 2026 - de"><link rel="preconnect" href="https://fonts.googleapis.com" as="font"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin as="font"><link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet"><style>:root{--banner-padding:6px;--font-size:8px}body,html{width:100%;height:100%;padding:0;margin:0;overflow:hidden;background-color:var(--background)}body *{box-sizing:border-box}a,a:active,a:focus,a:hover{color:inherit;text-decoration:none}.abs{position:absolute}.copy-xs{font-size:min(.6em,12px)}#banner{position:relative;display:block;width:100vw;height:100vh;margin:0 auto;overflow:hidden;font-family:Roboto,sans-serif;font-size:var(--font-size);font-weight:600;color:#fff;cursor:pointer}.abs{position:absolute}.isAboutPage div#logos,.isAboutPage div#price{display:none}.isAboutPage.club div#price{display:block}@media (max-width:728px) and (min-height:220px){:root{--banner-padding:10px}}@media (min-width:400px) and (min-height:200px){:root{--banner-padding:10px;--font-size:10px}}@media (min-width:550px) and (min-height:220px){:root{--banner-padding:10px;--font-size:12px}}@media (min-width:550px) and (min-height:250px){:root{--banner-padding:15px;--font-size:13px}}@media (min-width:850px) and (min-height:200px){:root{--banner-padding:15px;--font-size:12px}}@media (min-width:900px) and (min-height:250px){:root{--banner-padding:15px;--font-size:15px}}@media (min-width:1200px) and (min-height:400px){:root{--font-size:20px}}#banner[data-env=dev]::before,#banner[data-env=dev][data-api=no-api]::before,#banner[data-env=stagging][data-api=no-api]::before{position:absolute;inset:0;z-index:1000;width:calc(100% - 2px);height:calc(100% - 2px);content:"";border:1px solid red}#banner[data-env=dev]::after,#banner[data-env=dev][data-api=no-api]::after,#banner[data-env=stagging][data-api=no-api]::after{position:absolute;bottom:0;left:10px;padding:2px 4px;font-size:8px;font-weight:700;color:#fff;text-transform:uppercase;content:attr(data-env);background-color:red;border-radius:5px 5px 0 0}#banner[data-api=no-api]::after{content:"error: couldn't fetch your test API"}</style><link href="css/main.min.css" rel="stylesheet"></head><body><div id="banner" class="de" data-template="2026.0"><div id="stars"></div><div id="split-screen" class="abs"><div class="abs" id="image"><img src="images/_blank.gif" id="img" alt=""><div id="img_txt" class="abs copy-xl img_txt">Le café du matin*</div></div><div class="abs message" id="smjg"><div class="message_container"><div class="copy-l txt_1">*avec</div><div class="jackpot--balloons"><div id="date-smjg" class="stamp copy-m">%date%</div><div class="balloons_container"><div class="balloon bg-1 first" id="1st"></div><div class="balloon bg-3 second" id="2nd"></div><div class="balloon bg-0" id="3rd"></div><div class="balloon bg-euro" id="ballons-euro-smjg"></div></div></div><div class="millions">millions</div><div class="copy-l txt_2">en poche</div></div></div></div><div id="fullsize" class="abs message"><div id="txt_to_add"></div><div class="jackpot--balloons"><div id="date" class="stamp copy-m">%date%</div><div class="balloons_container" id="balloons_container"></div></div></div><div id="logos"><img class="logo euromillions" width="116" height="84" src="./images/logoEumColor.svg" alt="euromillions"></div><div id="price" class="">Dès 2,50&nbsp;€</div><div id="preload"></div></div><script>var DEVURL=["http://localhost:3000","http://localhost:3001","http://localhost:3002"],PEVIEWSURL=["https://nalo-banners.vercel.app"],STAGGINGURL=["https://aem-nl.acc.natlot.be","https://aem-fr.acc.natlot.be","https://aem-de.acc.natlot.be","https://aem-author.acc.natlot.be"],ENV="prod";STAGGINGURL.includes(window.location.origin)&&(ENV="stagging"),PEVIEWSURL.includes(window.location.origin)&&(ENV="previews"),DEVURL.includes(window.location.origin)&&(ENV="dev"),document.addEventListener("DOMContentLoaded",function(){"dev"!==ENV&&"stagging"!==ENV||document.getElementById("banner").setAttribute("data-env",ENV)});var smjg_img_txt="",smjg_date="2026-02-20T19:59:59"</script><script>try {
+        (function isAboutPageAddClass() {
+            var parentWindow = window.parent;
+            var isInIframe = (parent !== window);
+            var parentUrl = isInIframe ? document.referrer : document.location.href;
+            var isMatch = false;
+            var gameName = "euromillions";
+            if (gameName === "undefined" || gameName === "null" || gameName.length === 0) {
+                return
+            }
+            var matchRegex = new RegExp(gameName, "i");
+            var isAMatch = matchRegex.test(parentUrl);
+
+            if (!isAMatch) {
+                while (parentWindow !== window.top) {
+                    parentWindow = parentWindow.parent;
+
+                    try {
+                        if (matchRegex.test(parentWindow.location.href)) {
+                            isMatch = true;
+                            break;
+                        }
+                    } catch (error) {
+                        console.log(error);
+                        isMatch = false;
+                        break;
+                    }
+                }
+            }
+            document.addEventListener('DOMContentLoaded', function () {
+                if (isMatch || isAMatch) {
+                    var animatedBannerID = document.getElementById('banner');
+                    animatedBannerID.classList.add('isAboutPage', 'euromillions');
+                }
+            })
+        })();
+    } catch (error) {
+        console.log(error);
+    }
+    
+    function addStyle(blob, path) {
+        return blob
+            .text()
+            .then(text => {
+                const style = document.createElement('style');
+                style.innerHTML = text;
+                document.head.append(style);
+            });
+    }
+    function addScript(blob, path) {
+        return blob
+            .text()
+            .then(text => {
+                const script = document.createElement('script');
+                script.innerHTML = text;
+                document.body.append(script);
+            });
+    }
+
+    function addFont(blob, path, params) {
+        return new Promise(resolve => {
+            var reader = new FileReader();
+            reader.readAsDataURL(blob);
+            reader.onloadend = function () {
+                var base64data = reader.result;
+                var font = new FontFace(params.name || path, "url(" + base64data + ")", {
+                    style: params.style || 'normal',
+                    weight: params.weight || '400',
+                    display: 'swap'
+                });
+                font
+                    .load()
+                    .then(function () {
+                        document
+                            .fonts
+                            .add(font);
+                        resolve();
+                    })
+            }
+        });
+    }
+
+    function loadAsset(path, callback, params) {
+        return new Promise((resolve) => {
+            if (caches.keys.length === 0) {
+                fetch(path)
+                    .then(response => response.blob())
+                    .then(blob => {
+                        resolve(callback(blob, path, params));
+                    }).catch(err => {
+                        console.log(err);
+                    })
+            } else {
+                caches
+                    .match(path, { ignoreSearch: true })
+                    .then(response => {
+                        return response || fetch(path).then(response => {
+                            const responseClone = response.clone();
+                            if (response.status === 200) {
+                                caches
+                                    .open('commons')
+                                    .then(cache => cache.put(path, responseClone));
+                            }
+                            return response;
+                        })
+                    })
+                    .then(response => response.blob())
+                    .then(blob => {
+                        resolve(callback(blob, path, params));
+                    }).catch(err => {
+                        console.log(err);
+                    });
+            }
+
+        });
+    }
+
+   
+
+    loadAsset("js/main.js", addScript);
+
+    if (ENV === undefined) {
+        var ENV = "prod";
+    }
+
+    var settings = {
+        env: ENV || 'prod',
+        language: "de"
+    };</script></body></html>
