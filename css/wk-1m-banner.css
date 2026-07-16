@@ -170,6 +170,8 @@ html.wk-1m-banner-embed-root .wk-1m-banners {
   object-fit: cover;
   object-position: 50% 50%;
   z-index: 1;
+  /* Remove any inherited width/height attrs that could stretch the image */
+  max-width: none;
   /* Fade out once video is ready */
   opacity: 1;
   transition: opacity 0.35s ease;
@@ -202,7 +204,8 @@ html.wk-1m-banner-embed-root .wk-1m-banners {
 
 /* #bg-video breakpoints (festival) */
 @media (min-width: 768px) {
-  .wk-1m-banner__bg-video {
+  .wk-1m-banner__bg-video,
+  .wk-1m-banner__video-poster {
     object-position: 50% 50%;
   }
 }
@@ -211,6 +214,9 @@ html.wk-1m-banner-embed-root .wk-1m-banners {
   .wk-1m-banner__bg-video {
     top: 0;
     height: 120%;
+    object-position: 50% 30%;
+  }
+  .wk-1m-banner__video-poster {
     object-position: 50% 30%;
   }
 }
@@ -248,7 +254,8 @@ html.wk-1m-banner-embed-root .wk-1m-banners {
     transform: translate(-50%, -50%);
   }
 
-  .wk-1m-banner__bg-video {
+  .wk-1m-banner__bg-video,
+  .wk-1m-banner__video-poster {
     top: 61%;
     left: 52%;
     width: 143vw;
