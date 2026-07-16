@@ -1,0 +1,684 @@
+/*
+ * WK 1M 2026 — dynamic phase 2 banner
+ * Design reference: 1240×220 @ 12px base (--font-size)
+ */
+
+/* --- Fonts & tokens --- */
+@font-face {
+  font-family: "PaloLotto";
+  src: url("Palo-Lotto.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Palo";
+  src: url("palo-regular.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+}
+:root {
+  --font-sans: "roboto", system-ui, sans-serif;
+  --font-size: 8px;
+  --white: #fff;
+}
+
+@media (min-width: 420px) and (min-height: 200px) {
+  :root {
+    --font-size: 10px;
+  }
+}
+
+@media (min-width: 550px) and (min-height: 220px) {
+  :root {
+    --font-size: 12px;
+  }
+}
+
+@media (min-width: 900px) and (min-height: 250px) {
+  :root {
+    --font-size: 15px;
+  }
+}
+
+@media (min-width: 1200px) and (min-height: 400px) {
+  :root {
+    --font-size: 20px;
+  }
+}
+
+/* --- Embed shell --- */
+* {
+  box-sizing: border-box;
+}
+
+html.wk-1m-banner-embed-root,
+html.wk-1m-banner-embed-root body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: var(--font-sans);
+  height: 100%;
+  max-height: 100%;
+}
+
+html.wk-1m-banner-embed-root .wk-1m-page--embed,
+html.wk-1m-banner-embed-root .wk-1m-banners {
+  height: 100%;
+  min-height: 0;
+}
+
+.wk-1m-page,
+.wk-1m-banners {
+  width: 100%;
+  height: 100%;
+}
+
+.wk-1m-banners {
+  container-type: size;
+  container-name: wk1m;
+}
+
+/* --- Banner frame --- */
+.wk-1m-banner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-size: var(--font-size);
+  --banner-padding: calc(24em / 12);
+  --img-width: 40%;
+  background: linear-gradient(90deg, #87090b 0%, #df1c16 45%, #ff3d2d 100%);
+}
+
+/* --- Background --- */
+.wk-1m-banner__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.wk-1m-banner__stadium {
+  position: absolute;
+  left: calc(-480em / 12);
+  top: 50%;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  display: block;
+  object-fit: cover;
+  object-position: right center;
+  transform: translateY(-50%);
+  transform-origin: right center;
+  z-index: 1;
+}
+
+.wk-1m-banner__bg--playing .wk-1m-banner__stadium {
+  opacity: 0;
+}
+
+/* Video scene — festival #scene_car / #bg-video pattern */
+.wk-1m-banner__scene {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  z-index: 2;
+  width: var(--img-width);
+  height: 100%;
+  aspect-ratio: 2 / 1;
+  overflow: hidden;
+  border-top: inherit;
+  border-left: inherit;
+  border-bottom: inherit;
+  border-top-left-radius: 0;
+  border-top-right-radius: 9999px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 9999px;
+  box-shadow: 0 0 7px rgba(0, 0, 0, 0.5);
+}
+
+.wk-1m-banner__bg-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: 50% 50%;
+}
+
+@media (max-width: 850px) and (max-height: 500px) {
+  .wk-1m-banner {
+    --img-width: 50%;
+  }
+}
+
+/* #bg-video breakpoints (festival) */
+@media (min-width: 768px) {
+  .wk-1m-banner__bg-video {
+    object-position: 50% 50%;
+  }
+}
+
+@media (min-width: 1000px) and (max-height: 220px) {
+  .wk-1m-banner__bg-video {
+    top: 0;
+    height: 120%;
+    object-position: 50% 30%;
+  }
+}
+
+@media (min-width: 800px) and (max-height: 250px) {
+  .wk-1m-banner__stadium {
+    object-position: 50% 10%;
+  }
+}
+
+@media (min-width: 1000px) and (max-height: 300px) {
+  .wk-1m-banner__stadium {
+    object-position: 50% 0;
+  }
+}
+
+@media (max-height: 200px) {
+  .wk-1m-banner__stadium {
+    object-position: 80% 50%;
+  }
+}
+
+/* Tall / narrow portrait slots */
+@media (max-aspect-ratio: 6 / 5) {
+  .wk-1m-banner__scene {
+    top: auto;
+    bottom: -10%;
+    left: 50%;
+    width: 125vw;
+    height: 100vh;
+    overflow: hidden;
+    border-top-right-radius: 0;
+    border-bottom-left-radius: 9999px;
+    border-bottom-right-radius: 9999px;
+    transform: translate(-50%, -50%);
+  }
+
+  .wk-1m-banner__bg-video {
+    top: 61%;
+    left: 52%;
+    width: 143vw;
+    height: 120%;
+    transform: translate(-50%, -40%);
+  }
+}
+/* --- Content --- */
+.wk-1m-banner__content {
+  position: relative;
+  z-index: 5;
+  width: 100%;
+  height: 100%;
+}
+
+.wk-1m-banner__logo {
+  position: absolute;
+  top: var(--banner-padding);
+  right: var(--banner-padding);
+  z-index: 20;
+  width: calc(186em / 12);
+  max-width: 40%;
+  height: auto;
+  object-fit: contain;
+}
+
+/* --- Date pills under headline --- */
+.wk-1m-banner__promo-dates {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35em;
+}
+
+.wk-1m-banner__promo-line {
+  margin: 0;
+  padding: 0.3em 0.6em 0.34em;
+  font-family: "Palo", var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  font-size: calc(22em / 12);
+  font-weight: 700;
+  font-style: normal;
+  line-height: 1.05;
+  color: #e84838;
+  background: var(--white);
+  border-radius: 0 0 0 15.565px;
+  white-space: nowrap;
+  text-transform: normal;
+}
+
+/* --- Copy --- */
+.wk-1m-banner__text {
+  position: absolute;
+  top: 50%;
+  right: var(--banner-padding);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  gap: 1.2em;
+  width: 80%;
+  max-height: calc(100% - 2 * var(--banner-padding));
+  transform: translateY(-50%);
+}
+
+.wk-1m-banner__copy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4em;
+  text-align: center;
+}
+
+.wk-1m-banner__hero {
+  margin: 0;
+  text-align: center;
+  font-family: "PaloLotto", var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  font-size: calc(64em / 12);
+  font-weight: normal;
+  font-style: normal;
+  line-height: 0.9;
+  color: var(--white);
+}
+
+.wk-1m-banner__headline,
+.wk-1m-banner__jackpot,
+.wk-1m-banner__line.wk-1m-banner__extra,
+.wk-1m-banner__line.wk-1m-banner__jackpot {
+  font-family: "PaloLotto", var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  font-size: 64px;
+  font-weight: normal;
+  font-style: normal;
+  text-transform: uppercase;
+  color: var(--white);
+}
+
+.wk-1m-banner__headline {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15em;
+  margin: 0;
+  text-align: center;
+}
+
+.wk-1m-banner__extra {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 0.02em;
+  margin: 0;
+  line-height: 0.82;
+  white-space: nowrap;
+}
+
+.wk-1m-banner__extra span {
+  display: inline-block;
+  transform-origin: bottom center;
+}
+
+.wk-1m-banner__extra span:nth-child(1),
+.wk-1m-banner__extra span:nth-child(2),
+.wk-1m-banner__extra span:nth-child(3),
+.wk-1m-banner__extra span:nth-child(4),
+.wk-1m-banner__extra span:nth-child(5) {
+  font-size: 1em;
+}
+
+.wk-1m-banner__extra span:nth-child(6) {
+  font-size: 1.08em;
+}
+.wk-1m-banner__extra span:nth-child(7) {
+  font-size: 1.16em;
+}
+.wk-1m-banner__extra span:nth-child(8) {
+  font-size: 1.34em;
+}
+.wk-1m-banner__extra span:nth-child(9) {
+  font-size: 1.32em;
+}
+.wk-1m-banner__extra span:nth-child(10) {
+  font-size: 1.38em;
+}
+.wk-1m-banner__extra span:nth-child(11) {
+  font-size: 1.44em;
+}
+.wk-1m-banner__extra span:nth-child(12) {
+  font-size: 1.5em;
+}
+
+.wk-1m-banner__jackpot {
+  display: block;
+  line-height: 0.95;
+  text-align: center;
+}
+
+/* --- Countdown --- */
+.wk-1m-banner__countdown {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5em;
+}
+
+.wk-1m-banner__countdown-hint,
+.wk-1m-banner__countdown-label {
+  margin: 0;
+  font-size: calc(17em / 12);
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  color: var(--white);
+}
+
+.wk-1m-counter,
+.wk-1m-banner__countdown-digits {
+  display: grid;
+  grid-template-rows: auto auto;
+  grid-auto-flow: column;
+  align-items: center;
+  justify-items: center;
+  column-gap: clamp(4px, 0.4vw, 10px);
+  row-gap: 0.35em;
+}
+
+.wk-1m-counter__item,
+.wk-1m-banner__countdown-unit {
+  display: contents;
+}
+
+.wk-1m-counter__digits,
+.wk-1m-banner__countdown-boxes {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: calc(16em / 48);
+  grid-row: 1;
+}
+
+.wk-1m-counter__label,
+.wk-1m-banner__countdown-unit .wk-1m-banner__countdown-label {
+  grid-row: 2;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--white);
+}
+
+.wk-1m-counter__sep,
+.wk-1m-banner__countdown-sep {
+  grid-row: 1;
+  align-self: center;
+  font-size: calc(30em / 12);
+  font-weight: 800;
+  line-height: 1;
+  color: var(--white);
+}
+
+.wk-1m-counter__value,
+.wk-1m-banner__countdown-box {
+  display: flex;
+  flex-shrink: 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: calc(39.58em / 48);
+  height: calc(58.51em / 48);
+  padding: calc(12.178em / 48) calc(5.654em / 48) calc(12.332em / 48)
+    calc(5.927em / 48);
+  font-size: calc(48em / 12);
+  font-weight: 900;
+  line-height: 1;
+  color: var(--white);
+  background: rgba(255, 255, 255, 0.35);
+  border-radius: 0.15em;
+  backdrop-filter: blur(2px);
+}
+
+/* --- Media: 1240×220 leaderboard --- */
+@media (min-width: 900px) and (max-height: 280px) {
+  .wk-1m-banner__stadium {
+    width: 50%;
+    transform: translateY(-50%) scale(1);
+    left: calc(-134em / 5);
+  }
+
+  .wk-1m-banner__promo-line {
+    font-size: calc(18em / 12);
+  }
+  .wk-1m-banner__hero {
+    font-size: calc(36em / 12);
+  }
+  .wk-1m-banner__headline,
+  .wk-1m-banner__jackpot,
+  .wk-1m-banner__line.wk-1m-banner__extra,
+  .wk-1m-banner__line.wk-1m-banner__jackpot {
+    font-size: 32px;
+  }
+
+  .wk-1m-banner__headline,
+  .wk-1m-banner__jackpot {
+    font-size: 33px;
+  }
+
+  .wk-1m-banner__text {
+    top: 58%;
+  }
+}
+
+@media (min-width: 1000px) and (max-height: 260px) {
+  .wk-1m-banner__text {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5em;
+    width: 60%;
+    transform: translateY(-50%);
+    right: 8%;
+    top: 50%;
+  }
+}
+
+@media (max-height: 220px) and (min-width: 640px) {
+  .wk-1m-banner__promo-line {
+    font-size: calc(16em / 12);
+    padding: 0.25em 0.5em 0.28em;
+  }
+}
+
+/* --- Tall placements (1600×450 / 820 / 867 / 939) --- */
+@media (min-width: 1200px) and (min-height: 380px) and (max-height: 520px) {
+  .wk-1m-banner__promo-line {
+    font-size: calc(28em / 12);
+  }
+}
+
+/* --- Media: narrow widths --- */
+@media (max-width: 1380px) {
+  .wk-1m-banner__logo {
+    width: calc(124em / 12);
+  }
+  .wk-1m-banner__hero {
+    font-size: calc(44em / 12);
+  }
+  .wk-1m-banner__headline,
+  .wk-1m-banner__jackpot,
+  .wk-1m-banner__line.wk-1m-banner__extra,
+  .wk-1m-banner__line.wk-1m-banner__jackpot {
+    font-size: 40px;
+  }
+  .wk-1m-counter__value,
+  .wk-1m-banner__countdown-box {
+    font-size: calc(36em / 12);
+  }
+}
+
+/* --- 983×300 strip --- */
+@container wk1m (min-width: 963px) and (max-width: 1003px) and (min-height: 285px) and (max-height: 315px) {
+  .wk-1m-banner {
+    font-size: 12px;
+    --banner-padding: calc(18em / 12);
+  }
+
+  .wk-1m-banner__logo {
+    width: clamp(90px, calc(118em / 12), 124px);
+    max-width: 30%;
+  }
+
+  .wk-1m-banner__hero {
+    font-size: clamp(26px, calc(48em / 12), 114px);
+  }
+
+  .wk-1m-banner__headline,
+  .wk-1m-banner__jackpot,
+  .wk-1m-banner__line.wk-1m-banner__extra,
+  .wk-1m-banner__line.wk-1m-banner__jackpot {
+    font-size: clamp(16px, calc(20em / 12), 48px);
+  }
+
+  .wk-1m-banner__stadium {
+    width: 62%;
+    left: calc(-220em / 12);
+    transform: translateY(-50%) scale(1.05);
+  }
+
+  .wk-1m-banner__text {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75em;
+    width: 56%;
+    top: 52%;
+    transform: translateY(-50%);
+  }
+
+  .wk-1m-banner__copy {
+    gap: 0.25em;
+  }
+}
+
+@media (min-width: 963px) and (max-width: 1003px) and (min-height: 285px) and (max-height: 315px) {
+  .wk-1m-banner {
+    font-size: 12px;
+    --banner-padding: calc(18em / 12);
+  }
+
+  .wk-1m-banner__logo {
+    width: clamp(90px, calc(118em / 12), 124px);
+    max-width: 30%;
+  }
+
+  .wk-1m-banner__hero {
+    font-size: clamp(26px, calc(54em / 12), 114px);
+  }
+
+  .wk-1m-banner__headline,
+  .wk-1m-banner__jackpot,
+  .wk-1m-banner__line.wk-1m-banner__extra,
+  .wk-1m-banner__line.wk-1m-banner__jackpot {
+    font-size: clamp(16px, calc(20em / 12), 60px);
+  }
+
+  .wk-1m-banner__text {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5em;
+    width: 64%;
+    top: 54%;
+    transform: translateY(-50%);
+  }
+}
+
+@media (max-width: 900px) {
+  .wk-1m-banner__text {
+    width: 44%;
+    top: 56%;
+  }
+  .wk-1m-banner__hero {
+    font-size: calc(54em / 12);
+  }
+  .wk-1m-banner__headline,
+  .wk-1m-banner__jackpot,
+  .wk-1m-banner__line.wk-1m-banner__extra,
+  .wk-1m-banner__line.wk-1m-banner__jackpot {
+    font-size: 32px;
+  }
+
+  .wk-1m-banner__stadium {
+    width: 75%;
+    left: calc(-240em / 12);
+  }
+
+  .wk-1m-banner__promo-line {
+    font-size: calc(17em / 12);
+  }
+}
+
+@media (max-width: 700px) {
+  .wk-1m-banner {
+    --img-width: 42%;
+    --banner-padding: calc(12em / 12);
+  }
+
+  .wk-1m-banner__text {
+    width: 58%;
+    top: 55%;
+  }
+
+  .wk-1m-banner__hero {
+    font-size: 30px;
+  }
+  .wk-1m-banner__headline,
+  .wk-1m-banner__jackpot {
+    font-size: 20px;
+  }
+
+  .wk-1m-banner__logo {
+    width: 90px;
+  }
+
+  .wk-1m-banner__promo-line {
+    font-size: calc(15em / 12);
+  }
+}
+
+@media (max-width: 480px) {
+  .wk-1m-banner__text {
+    width: 54%;
+  }
+
+  .wk-1m-banner__hero {
+    font-size: 26px;
+  }
+
+  .wk-1m-banner__jackpot {
+    font-size: 20px;
+  }
+  .wk-1m-banner__stadium {
+    width: 90%;
+  }
+
+  .wk-1m-banner__promo-line {
+    font-size: 14px;
+    white-space: normal;
+  }
+}
+@media (max-width: 380px) {
+  .wk-1m-banner__stadium {
+    left: calc(-150em / 12);
+    width: 100%;
+  }
+}
