@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>WK 1M 2026 Dynamic Phase 2: Banner</title>
     <link rel="stylesheet" href="https://use.typekit.net/zre5ufn.css" />
-    <link rel="stylesheet" href="css/wk-1m-banner.css?v=18" />
+    <link rel="stylesheet" href="css/wk-1m-banner.css?v=25" />
   </head>
   <body>
     <div class="wk-1m-page wk-1m-page--embed">
@@ -19,21 +19,6 @@
           aria-label="Bannière promotionnelle Lotto"
         >
           <div class="wk-1m-banner__bg" aria-hidden="true">
-            <div class="wk-1m-banner__scene">
-              <video
-                id="bg-video"
-                class="wk-1m-banner__bg-video"
-                src="images/Video_1M_HTML_Banner.mp4"
-                poster="images/Stadium.png"
-                width="1240"
-                height="220"
-                autoplay
-                muted
-                loop
-                playsinline
-                preload="auto"
-              ></video>
-            </div>
             <picture>
               <source srcset="images/Stadium.webp" type="image/webp" />
               <img
@@ -44,6 +29,30 @@
                 alt=""
               />
             </picture>
+            <div class="wk-1m-banner__scene">
+              <img
+                class="wk-1m-banner__video-poster"
+                src="images/Video_poster.jpg"
+                width="1240"
+                height="220"
+                alt=""
+                fetchpriority="high"
+              />
+              <video
+                id="bg-video"
+                class="wk-1m-banner__bg-video"
+                width="1240"
+                height="220"
+                autoplay
+                muted
+                loop
+                playsinline
+                preload="auto"
+              >
+                <source src="images/Video_1M_HTML_Banner_opt.webm" type="video/webm" />
+                <source src="images/Video_1M_HTML_Banner_opt.mp4" type="video/mp4" />
+              </video>
+            </div>
           </div>
 
           <div class="wk-1m-banner__content">
@@ -81,19 +90,37 @@
 
     <script>
       (function () {
-        const video = document.querySelector(".wk-1m-banner__bg-video");
-        const bg = document.querySelector(".wk-1m-banner__bg");
-        if (!video) return;
+        var video = document.querySelector(".wk-1m-banner__bg-video");
+        var bg    = document.querySelector(".wk-1m-banner__bg");
+        if (!video || !bg) return;
+
         video.muted = true;
-        const onPlaying = () => bg?.classList.add("wk-1m-banner__bg--playing");
-        video.addEventListener("playing", onPlaying);
-        const play = () =>
-          video
-            .play()
-            .then(onPlaying)
-            .catch(() => {});
+
+        function showFallback() {
+          bg.classList.remove("wk-1m-banner__bg--playing");
+          bg.classList.add("wk-1m-banner__bg--fallback");
+        }
+
+        function onReady() {
+          bg.classList.remove("wk-1m-banner__bg--fallback");
+          bg.classList.add("wk-1m-banner__bg--playing");
+        }
+
+        video.addEventListener("error", showFallback);
+        video.addEventListener("canplay", onReady, { once: true });
+        video.addEventListener("playing", onReady, { once: true });
+
+        function play() {
+          video.play().catch(showFallback);
+        }
+
+        if (video.readyState >= 2) {
+          onReady();
+        }
+
         play();
-        document.addEventListener("visibilitychange", () => {
+
+        document.addEventListener("visibilitychange", function () {
           if (!document.hidden) play();
         });
       })();
