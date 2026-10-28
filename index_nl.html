@@ -1,0 +1,129 @@
+<!DOCTYPE html><html data-lt-installed="true" lang="nl"><head><title>NALO_WOOHOO-2368_Northern Jack_nl</title><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="initial-scale=1"><meta name="robots" content="noindex"><meta name="description" content="NALO Northern Jack - nl"><style>:root{--banner-padding:6px;--font-size:8px}body,html{width:100%;height:100%;padding:0;margin:0;overflow:hidden;background-color:var(--background)}body *{box-sizing:border-box}a,a:active,a:focus,a:hover{color:inherit;text-decoration:none}.abs{position:absolute}.copy-xs{font-size:min(.6em,12px)}#banner{position:relative;display:block;width:100vw;height:100vh;margin:0 auto;overflow:hidden;font-family:ff-dax-pro,sans-serif;font-size:var(--font-size);font-weight:600;color:#fff;cursor:pointer}.abs{position:absolute}.isAboutPage div#logos,.isAboutPage div#price{display:none}.isAboutPage.club div#price{display:block}@media (max-width:728px) and (min-height:200px){:root{--banner-padding:10px}}@media (min-width:400px){:root{--banner-padding:10px;--font-size:10px}}@media (min-width:550px){:root{--banner-padding:10px;--font-size:12px}}@media (min-width:550px) and (min-height:200px){:root{--banner-padding:15px;--font-size:13px}}@media (min-width:900px) and (min-height:250px){:root{--banner-padding:15px;--font-size:15px}}@media (min-width:1200px) and (min-height:400px){:root{--font-size:20px}}#banner[data-env=dev]::before,#banner[data-env=dev][data-api=no-api]::before,#banner[data-env=stagging][data-api=no-api]::before{position:absolute;inset:0;z-index:1000;width:calc(100% - 2px);height:calc(100% - 2px);content:"";border:1px solid red}#banner[data-env=dev]::after,#banner[data-env=dev][data-api=no-api]::after,#banner[data-env=stagging][data-api=no-api]::after{position:absolute;bottom:0;left:10px;padding:2px 4px;font-size:8px;font-weight:700;color:#fff;text-transform:uppercase;content:attr(data-env);background-color:red;border-radius:5px 5px 0 0}#banner[data-api=no-api]::after{content:"error: couldn't fetch your test API"}</style><link href="css/main.min.css" rel="stylesheet"></head><body><div id="banner" class="nl" data-template="2025.0"><div id="background"><picture><source srcset="images/bg_mobile.webp" media="(max-width: 440px) and (max-height: 300px)"><source srcset="images/bg.webp"><img class="bg" src="images/bg.jpg" alt="" width="1280" height="681"></picture></div><picture><source srcset="images/foreground_wide.webp" media="(min-aspect-ratio: 3.6/1)"><source srcset="images/foreground_mobile.webp" media="(max-width: 440px) and (max-height: 300px)"><source srcset="images/foreground.webp"><img class="foreground" src="images/foreground.jpg" alt="" width="1280" height="199"></picture><div id="overlay"></div><div id="scene"><div id="subject"><picture><source srcset="images/dog_oldman.webp" type="image/webp"><img class="dog_oldman abs" src="images/dog_oldman.png" alt="" width="525" height="375"></picture><picture><source srcset="images/tnt_gold.webp" type="image/webp"><img class="tnt_gold abs" src="images/tnt_gold.png" alt="" width="273" height="116"></picture></div></div><div id="preload"></div><div id="logos"><picture><source srcset="./images/logo_northern_jack_new.webp" type="image/webp"><img class="logo" width="168" height="300" src="./images/logo_northern_jack_new.png" alt="Logo Norterhn Jack"></picture></div><div id="price" class="">Vanaf €&nbsp;1</div><div id="logo-label-wrapper" class="wrapper"><div class="label text-label" style="background-color:#e67300"><div class="copy-s">New</div></div></div><div class="content absolute"><div class="txt"><div class="copy-headline">Een gouden zoektocht</div><div class="copy-text">Win tot €&nbsp;100.000</div><div class="copy-m">1 kans op 2,99</div></div></div></div><script>var DEVURL=["http://localhost:3000","http://localhost:3001","http://localhost:3002"],PEVIEWSURL=["https://nalo-banners.vercel.app"],STAGGINGURL=["https://aem-nl.acc.natlot.be","https://aem-fr.acc.natlot.be","https://aem-de.acc.natlot.be","https://aem-author.acc.natlot.be"],ENV="prod";STAGGINGURL.includes(window.location.origin)&&(ENV="stagging"),PEVIEWSURL.includes(window.location.origin)&&(ENV="previews"),DEVURL.includes(window.location.origin)&&(ENV="dev"),document.addEventListener("DOMContentLoaded",function(){"dev"!==ENV&&"stagging"!==ENV||document.getElementById("banner").setAttribute("data-env",ENV)})</script><script>try {
+        (function isAboutPageAddClass() {
+            var parentWindow = window.parent;
+            var isInIframe = (parent !== window);
+            var parentUrl = isInIframe ? document.referrer : document.location.href;
+            var isMatch = false;
+            var gameName = "";
+            if (gameName === "undefined" || gameName === "null" || gameName.length === 0) {
+                return
+            }
+            var matchRegex = new RegExp(gameName, "i");
+            var isAMatch = matchRegex.test(parentUrl);
+
+            if (!isAMatch) {
+                while (parentWindow !== window.top) {
+                    parentWindow = parentWindow.parent;
+
+                    try {
+                        if (matchRegex.test(parentWindow.location.href)) {
+                            isMatch = true;
+                            break;
+                        }
+                    } catch (error) {
+                        console.log(error);
+                        isMatch = false;
+                        break;
+                    }
+                }
+            }
+            document.addEventListener('DOMContentLoaded', function () {
+                if (isMatch || isAMatch) {
+                    var animatedBannerID = document.getElementById('banner');
+                    animatedBannerID.classList.add('isAboutPage', '');
+                }
+            })
+        })();
+    } catch (error) {
+        console.log(error);
+    }
+    
+    function addStyle(blob, path) {
+        return blob
+            .text()
+            .then(text => {
+                const style = document.createElement('style');
+                style.innerHTML = text;
+                document.head.append(style);
+            });
+    }
+    function addScript(blob, path) {
+        return blob
+            .text()
+            .then(text => {
+                const script = document.createElement('script');
+                script.innerHTML = text;
+                document.body.append(script);
+            });
+    }
+
+    function addFont(blob, path, params) {
+        return new Promise(resolve => {
+            var reader = new FileReader();
+            reader.readAsDataURL(blob);
+            reader.onloadend = function () {
+                var base64data = reader.result;
+                var font = new FontFace(params.name || path, "url(" + base64data + ")", {
+                    style: params.style || 'normal',
+                    weight: params.weight || '400',
+                    display: 'swap'
+                });
+                font
+                    .load()
+                    .then(function () {
+                        document
+                            .fonts
+                            .add(font);
+                        resolve();
+                    })
+            }
+        });
+    }
+
+    function loadAsset(path, callback, params) {
+        return new Promise((resolve) => {
+            if (caches.keys.length === 0) {
+                fetch(path)
+                    .then(response => response.blob())
+                    .then(blob => {
+                        resolve(callback(blob, path, params));
+                    }).catch(err => {
+                        console.log(err);
+                    })
+            } else {
+                caches
+                    .match(path, { ignoreSearch: true })
+                    .then(response => {
+                        return response || fetch(path).then(response => {
+                            const responseClone = response.clone();
+                            if (response.status === 200) {
+                                caches
+                                    .open('commons')
+                                    .then(cache => cache.put(path, responseClone));
+                            }
+                            return response;
+                        })
+                    })
+                    .then(response => response.blob())
+                    .then(blob => {
+                        resolve(callback(blob, path, params));
+                    }).catch(err => {
+                        console.log(err);
+                    });
+            }
+
+        });
+    }
+
+    loadAsset("https://use.typekit.net/yes6czp.css", addStyle);
+
+    loadAsset("js/main.js", addScript);
+
+    if (ENV === undefined) {
+        var ENV = "prod";
+    }
+
+    var settings = {
+        env: ENV || 'prod',
+        language: "nl"
+    };</script></body></html>
