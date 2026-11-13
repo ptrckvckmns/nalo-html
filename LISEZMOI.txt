@@ -1,0 +1,68 @@
+SAFE PLAY – BANNIÈRE HTML ANIMÉE (FR / NL / DE)
+================================================
+
+Structure
+---------
+index_fr.html, index_nl.html, index_de.html
+    Une page par langue, sur le gabarit actuel des bannières du site
+    (data-template="2026.0") : Roboto chargée depuis Google Fonts dans le <head>
+    (graisses 600 et 700), styles et breakpoints de base dans le <style>,
+    détection d'environnement (dev / staging / prod), js/main.js chargé par loadAsset().
+    Seuls les textes, le logo et la langue changent d'une page à l'autre.
+
+css/main.css
+    Mise en page propre à cette campagne (fond, logo, glace, tortue, textes).
+
+js/main.js
+    1) GSAP 3.11.5, identique à la bannière précédente.
+    2) L'animation, commentée, après la ligne de GSAP.
+
+images/logos/logo-fr.svg, logo-nl.svg, logo-de.svg
+    Logos officiels blancs, versions horizontales avec baseline.
+images/logos/logo-xx-sans-baseline.svg
+    Mêmes logos sans la baseline, utilisés sous 200 px de haut, où la baseline
+    serait illisible (balise <picture> : un seul des deux fichiers est chargé).
+    Seules les données internes d'Illustrator ont été retirées ;
+    le dessin est identique aux fichiers d'origine (vérifié au pixel).
+
+images/visuals/ice.webp      Glace + socle (issue du key visual).
+images/visuals/turtle.webp   Tortue avec son ombre au sol (chargée en différé, après la glace).
+
+Animation (cycle d'environ 13 s, en boucle)
+-------------------------------------------
+1. Gros plan sur la glace, zoom arrière en 3 s.
+2. Accroche, trait et « C'est ici qu'on vous aurait arrêté ».
+3. La tortue remplace la glace, avec « Jouer en sécurité ? … ».
+4. Retour au début.
+L'animation ne tourne que lorsque la bannière est visible à l'écran
+(pause hors écran, dans une slide cachée ou dans un onglet en arrière-plan).
+Si l'utilisateur a activé « réduire les animations », pas de zoom : simples fondus.
+
+Responsive
+----------
+Tout est positionné en vh / vw : la bannière remplit son cadre, quelle que soit la taille.
+- Mobile (moins de 550 px) : textes agrandis.
+- 728 px et plus : textes agrandis, glace/tortue et texte centrés
+  (recalculé si le cadre change de taille ou quand la bannière devient visible).
+- Tablette (728 px et plus, moins de 300 px de haut) : textes encore agrandis,
+  accroche sur trois lignes.
+- 1100 px et plus : accroche du frame 1 sur deux lignes.
+- Moins de 200 px de haut : logo sans baseline.
+Le texte se réduit automatiquement s'il ne tient pas ou s'il touche le logo.
+Testé sur 18 formats de 320×100 à 1920×400, dont 1090×240 (composant de la HP).
+
+Clic
+----
+Aucun lien dans la bannière : le clic est géré par le CMS du site.
+
+À noter
+-------
+- Ouverte en double-cliquant le fichier (file://), la bannière ne s'anime pas :
+  le chargeur du gabarit utilise l'API « caches », disponible seulement en https
+  ou sur localhost. C'est le comportement normal du gabarit.
+- Police : Roboto SemiBold (accroches) et Roboto Bold (« C'est ici… »),
+  chargée depuis Google Fonts comme les autres bannières Roboto du site.
+- Poids chargé par affichage : environ 270 Ko (environ 210 Ko transférés avec la
+  compression du serveur), plus Roboto depuis Google Fonts. Au premier affichage,
+  seuls environ 140 Ko sont nécessaires : la tortue (68 Ko) est chargée ensuite.
+  Glace 103 Ko, GSAP 29 Ko compressé.

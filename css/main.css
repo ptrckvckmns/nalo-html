@@ -1,0 +1,202 @@
+/* ==========================================================================
+   Safe Play – bannière HTML animée (FR / NL / DE)
+   Gabarit 2026.0 du site : police Roboto (Google Fonts, graisses 600 et 700),
+   tailles de base (--font-size, --banner-padding) et breakpoints dans le
+   <style> en tête de chaque index_xx.html.
+   Accroches en Roboto SemiBold (600), petite ligne du frame 1 en Bold (700).
+   Ce fichier ne contient que la mise en page propre à cette campagne.
+   Toutes les positions sont en vh/vw : la bannière s'adapte à son cadre.
+   ========================================================================== */
+
+:root {
+  --background: #3f9150;
+
+  /* Axe vertical de la glace, et colonne de texte à sa droite */
+  --ice-x: min(24vw, calc(46vh + 10px)); /* recalculé par js/main.js sur les grands formats */
+  --text-x: calc(var(--ice-x) + 26vh);
+
+  /* Hauteur du trait « C'est ici qu'on vous aurait arrêté » */
+  --tag-y: 67.5vh;
+
+  /* Coefficients de réduction du texte, calculés par js/main.js
+     pour que le texte ne déborde jamais et ne passe jamais sous le logo */
+  --fit: 1;      /* accroche du frame 1 */
+  --fit-tag: 1;  /* petite ligne du frame 1 */
+  --fit2: 1;     /* texte du frame 2 */
+
+  /* Tailles des textes (en em, relatives à --font-size du gabarit),
+     ajustées plus bas pour le mobile et les grands formats */
+  --title-size: 2.2em;
+  --tag-size: 1.2em;
+}
+
+/* Mobile (moins de 550 px de large) : textes plus grands */
+@media (max-width: 549px) {
+  :root {
+    --title-size: 2.7em;
+    --tag-size: 1.8em;
+  }
+}
+
+/* Tablette, laptop et desktop (728 px et plus, 200 px de haut et plus) :
+   textes plus grands. Le contenu est centré par js/main.js et, à partir
+   de 1100 px de large, l'accroche du frame 1 est mise sur deux lignes. */
+@media (min-width: 728px) and (min-height: 200px) {
+  :root {
+    --title-size: 2.7em;
+    --tag-size: 1.45em;
+  }
+}
+
+/* Tablette (formats larges et bas, moins de 300 px de haut) :
+   la taille de base du gabarit y est plus petite, on agrandit davantage */
+@media (min-width: 728px) and (min-height: 200px) and (max-height: 299px) {
+  :root {
+    --title-size: 3.2em;
+    --tag-size: 1.7em;
+  }
+
+  /* plus de largeur pour l'accroche : trois lignes au lieu de quatre */
+  #banner #hl1 {
+    max-width: min(13em, calc(100vw - var(--text-x) - var(--banner-padding)));
+  }
+}
+
+/* --- Fond ---------------------------------------------------------------- */
+
+#banner {
+  background:
+    radial-gradient(ellipse 64% 120% at 30% 58%, rgba(116, 190, 124, .95) 0, rgba(116, 190, 124, 0) 100%),
+    linear-gradient(90deg, #4d9c5b 0, #3f9150 45%, #2c7c3c 72%, #02501a 100%);
+  background-color: var(--background);
+}
+
+/* --- Logo (SVG officiels, versions horizontales) -------------------------- */
+
+#logos {
+  position: absolute;
+  top: clamp(8px, 7vh, 30px);
+  right: clamp(10px, 7vh, 32px);
+  z-index: 1500;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.logo {
+  display: block;
+  width: auto;
+  max-width: none;
+  height: clamp(28px, 19vh, 80px);
+}
+
+/* Sous 200 px de haut (320×100, 728×90…), la baseline (« Bien plus que jouer »…)
+   serait illisible : index_xx.html charge alors la version sans baseline (<picture>). */
+
+/* Le logo allemand est sur une seule ligne, donc plus long : on le réduit */
+.de .logo {
+  height: clamp(20px, 13.5vh, 58px);
+}
+
+/* --- Visuels ------------------------------------------------------------- */
+
+#ice,
+#turtle {
+  position: absolute;
+  max-width: none;
+  pointer-events: none;
+  visibility: hidden; /* rendus visibles par l'animation */
+}
+
+/* Glace + socle (frame 1). Le point d'origine du zoom est le point
+   désigné par le trait, pour que la glace se pose exactement à sa place. */
+#ice {
+  top: 4.4vh;
+  left: calc(var(--ice-x) - 15.65vh);
+  width: 31.3vh;
+  height: 109.8vh;
+  z-index: 3;
+  transform-origin: 50% 57.5%;
+}
+
+/* Tortue avec son ombre (frame 2). L'image inclut l'ombre portée vers la droite,
+   la tortue elle-même occupe environ 58 % de la largeur et 75 % de la hauteur. */
+#turtle {
+  top: 31vh;
+  left: calc(var(--ice-x) - 32.8vh);
+  width: 68.7vh;
+  height: 55vh;
+  z-index: 3;
+}
+
+/* --- Textes -------------------------------------------------------------- */
+
+.hl {
+  position: absolute;
+  left: var(--text-x);
+  z-index: 5;
+  width: max-content;
+  max-width: min(9.6em, calc(100vw - var(--text-x) - var(--banner-padding)));
+  margin: 0;
+  font-size: calc(var(--title-size) * var(--fit));
+  font-weight: 600;
+  line-height: 1.04;
+  letter-spacing: -.005em;
+  text-wrap: balance;
+  visibility: hidden;
+}
+
+/* Frame 1 : accroche, posée au-dessus de la petite ligne
+   (position affinée par js/main.js selon la taille de la petite ligne) */
+#hl1 {
+  bottom: 38vh;
+}
+
+/* Frame 2 : centrée verticalement, sur deux lignes fixes */
+#hl2 {
+  top: 50%;
+  max-width: none;
+  margin-top: -1.04em;
+  font-size: calc(var(--title-size) * var(--fit2));
+  white-space: nowrap;
+}
+
+#tag {
+  position: absolute;
+  top: var(--tag-y);
+  left: var(--text-x);
+  z-index: 5;
+  margin-top: -.6em;
+  font-size: max(10px, calc(var(--tag-size) * var(--fit-tag)));
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+  visibility: hidden;
+}
+
+/* Trait qui part de la glace vers le texte */
+#rule {
+  position: absolute;
+  top: var(--tag-y);
+  left: var(--ice-x);
+  z-index: 6;
+  width: calc(var(--text-x) - var(--ice-x) - .8em);
+  height: 1px;
+  background: #fff;
+  transform-origin: 0 50%;
+  visibility: hidden;
+}
+
+/* --- Formats bas (moins de 200 px de haut, ex. 728×90, 320×100) ----------- */
+/* L'accroche passe à la ligne avant d'arriver sous le logo,
+   et la petite ligne reste plus petite que l'accroche */
+
+@media (max-height: 199px) {
+  :root {
+    --tag-size: 1.2em;
+  }
+
+  #hl1 {
+    max-width: calc(100vw - var(--text-x) - 52vh - 12px); /* affiné par js/main.js */
+  }
+}
