@@ -18,7 +18,6 @@
   var TIMEOUT_MS = 5000;
 
   var LOCALE = 'nl-BE';                 // nl-BE en nl-NL geven beide "37.000.000"
-  var TIME_ZONE = 'Europe/Brussels';    // trekkingstijden zijn Belgische tijd
 
   /* --------------------------------------------------------------- DOM --- */
 
@@ -57,22 +56,72 @@
   }
 
   /**
-   * "2026-11-20T19:59:59+01:00" -> "donderdag 20 november"
-   * Intl geeft de Nederlandse namen al correct; we zetten enkel de eerste
-   * letter van de weekdag in hoofdletters via CSS (::first-letter).
+   * Parseert de API-datum "DD/MM/JJJJ" (bv. "20/11/2026") naar een Date.
+   *
+   * LET OP: new Date("20/11/2026") geeft Invalid Date en
+   * new Date("09/11/2026") wordt als MM/DD gelezen (11 september!).
+   * Daarom splitsen we de string zelf en bouwen we de Date met
+   * new Date(jaar, maand-1, dag) — dat is lokale middernacht en dus
+   * exact de bedoelde kalenderdag, zonder tijdzone-verschuiving.
+   *
+   * @param {string} value bv. "20/11/2026"
+   * @returns {Date|null} null als het formaat of de datum ongeldig is
    */
-  function formatDrawDate(isoString) {
-    var date = new Date(isoString);
+  function parseDrawDate(value) {
+    if (typeof value !== 'string') {
+      return null;
+    }
 
-    if (!isoString || isNaN(date.getTime())) {
+    // Staat zowel "20/11/2026" als "20-11-2026" of "20.11.2026" toe.
+    var parts = value.trim().split(/[\/\-.]/);
+
+    if (parts.length !== 3) {
+      return null;
+    }
+
+    var day = parseInt(parts[0], 10);
+    var month = parseInt(parts[1], 10);
+    var year = parseInt(parts[2], 10);
+
+    if (!isFinite(day) || !isFinite(month) || !isFinite(year)) {
+      return null;
+    }
+
+    if (year < 1000 || year > 9999 || month < 1 || month > 12 || day < 1 || day > 31) {
+      return null;
+    }
+
+    var date = new Date(year, month - 1, day);
+
+    // Vangt onbestaande dagen af, bv. 31/02/2026 dat stilzwijgend
+    // zou doorschuiven naar 3 maart.
+    if (
+      date.getFullYear() !== year ||
+      date.getMonth() !== month - 1 ||
+      date.getDate() !== day
+    ) {
+      return null;
+    }
+
+    return date;
+  }
+
+  /**
+   * "20/11/2026" -> "vrijdag 20 november"
+   * Intl levert de Nederlandse dagnamen en maandnamen aan.
+   * De hoofdletter van de weekdag komt uit CSS (::first-letter).
+   */
+  function formatDrawDate(value) {
+    var date = parseDrawDate(value);
+
+    if (!date) {
       return '';
     }
 
     return new Intl.DateTimeFormat(LOCALE, {
       weekday: 'long',
       day: 'numeric',
-      month: 'long',
-      timeZone: TIME_ZONE
+      month: 'long'
     }).format(date);
   }
 
@@ -140,7 +189,8 @@
   function render(event) {
     var maindraw = event.maindraw || {};
 
-    var dateText = formatDrawDate(event.iso8601date);
+    // Regel 1: de datum komt uit "drawdate" (DD/MM/JJJJ), niet uit iso8601date.
+    var dateText = formatDrawDate(event.drawdate);
     var amountText = formatAmount(maindraw.jackpot);
 
     elDate.textContent = dateText || 'Datum onbekend';
