@@ -1,0 +1,232 @@
+/* ==========================================================================
+   EuroMillions – volgende trekking (jackpot + drawdate)
+   ========================================================================== */
+
+:root {
+  --em-blue: #1a1a4e;
+  --em-blue-deep: #0d0d2b;
+  --em-yellow: #ffd100;
+  --em-red: #e31d0a;
+  --em-white: #ffffff;
+  --em-muted: rgba(255, 255, 255, 0.72);
+  --em-radius: 18px;
+  --em-pad: clamp(20px, 5vw, 44px);
+  --em-font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0;
+  padding: 16px;
+  font-family: var(--em-font);
+  color: var(--em-white);
+  background: radial-gradient(
+      circle at 50% 0%,
+      #232366 0%,
+      var(--em-blue) 42%,
+      var(--em-blue-deep) 100%
+    )
+    fixed;
+}
+
+/* --------------------------------------------------------------- card ---- */
+
+.em-card {
+  position: relative;
+  width: 100%;
+  max-width: 620px;
+  padding: var(--em-pad);
+  overflow: hidden;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--em-radius);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.42);
+}
+
+/* Decoratieve sterren, puur CSS zodat er geen beeldbestanden nodig zijn. */
+.em-card__stars {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  background-image:
+    radial-gradient(2px 2px at 12% 18%, var(--em-yellow), transparent 60%),
+    radial-gradient(2px 2px at 78% 12%, var(--em-white), transparent 60%),
+    radial-gradient(1.5px 1.5px at 32% 78%, var(--em-white), transparent 60%),
+    radial-gradient(1.5px 1.5px at 88% 66%, var(--em-yellow), transparent 60%),
+    radial-gradient(1.5px 1.5px at 62% 34%, var(--em-white), transparent 60%),
+    radial-gradient(1.5px 1.5px at 22% 52%, var(--em-yellow), transparent 60%);
+}
+
+.em-card > *:not(.em-card__stars) {
+  position: relative;
+  z-index: 1;
+}
+
+/* Laad-indicator: alleen zichtbaar zolang de fetch loopt. */
+.em-card[data-state="loading"] .em-card__date,
+.em-card[data-state="loading"] .em-card__label,
+.em-card[data-state="loading"] .em-card__amount {
+  animation: em-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes em-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .em-card[data-state="loading"] .em-card__date,
+  .em-card[data-state="loading"] .em-card__label,
+  .em-card[data-state="loading"] .em-card__amount {
+    animation: none;
+    opacity: 0.5;
+  }
+}
+
+/* --------------------------------------------------------------- tekst --- */
+
+.em-card__game {
+  margin: 0 0 18px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--em-yellow);
+}
+
+/* "donderdag 9 november" */
+.em-card__date {
+  margin: 0 0 20px;
+  font-size: clamp(1.35rem, 4.6vw, 2rem);
+  font-weight: 700;
+  line-height: 1.25;
+  text-wrap: balance;
+}
+
+/* Eerste letter van de weekdag hoofdletter, zoals "Donderdag". */
+.em-card__date::first-letter {
+  text-transform: uppercase;
+}
+
+.em-card__jackpot {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+/* "Jackpot van zo'n" */
+.em-card__label {
+  margin: 0;
+  font-size: clamp(0.95rem, 2.8vw, 1.15rem);
+  font-weight: 600;
+  color: var(--em-muted);
+}
+
+/* "€ 37.000.000" */
+.em-card__amount {
+  margin: 0;
+  font-size: clamp(2rem, 9vw, 3.5rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--em-yellow);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: break-word;
+}
+
+.em-card__legal {
+  margin: 18px 0 0;
+  font-size: 0.72rem;
+  line-height: 1.5;
+  color: var(--em-muted);
+  text-wrap: pretty;
+}
+
+/* ------------------------------------------------------------ status ----- */
+
+.em-card__status {
+  margin: 18px 0 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--em-white);
+}
+
+.em-card[data-state="error"] .em-card__date,
+.em-card[data-state="error"] .em-card__jackpot,
+.em-card[data-state="break"] .em-card__date,
+.em-card[data-state="break"] .em-card__jackpot {
+  display: none;
+}
+
+.em-card[data-state="error"] .em-card__status,
+.em-card[data-state="break"] .em-card__status {
+  color: var(--em-red);
+  font-weight: 700;
+}
+
+.em-card[data-state="error"] .em-card__status {
+  color: #ff8a7a;
+}
+
+/* ------------------------------------------------------------- retry ----- */
+
+.em-card__retry {
+  margin-top: 20px;
+  padding: 12px 26px;
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--em-blue-deep);
+  cursor: pointer;
+  background: var(--em-yellow);
+  border: 0;
+  border-radius: 999px;
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.em-card__retry:hover {
+  filter: brightness(1.08);
+}
+
+.em-card__retry:active {
+  transform: scale(0.97);
+}
+
+.em-card__retry:focus-visible {
+  outline: 3px solid var(--em-white);
+  outline-offset: 3px;
+}
+
+.em-noscript {
+  max-width: 480px;
+  margin: 24px auto;
+  font-family: var(--em-font);
+  font-size: 0.9rem;
+  color: var(--em-white);
+  text-align: center;
+}
