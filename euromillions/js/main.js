@@ -19,6 +19,27 @@
 
   var LOCALE = 'nl-BE';                 // nl-BE en nl-NL geven beide "37.000.000"
 
+  // Toegestane achtergrondvarianten (zie css/style.css).
+  // Standaard A; test een andere met ?bg=B (of C / D) achter de URL.
+  var VARIANTS = ['A', 'B', 'C', 'D'];
+
+  /* ------------------------------------------------------- achtergrond --- */
+
+  /**
+   * Leest ?bg= uit de URL en zet data-bg op <body>.
+   * Zonder (of met een ongeldige) parameter blijft de standaard uit de HTML staan.
+   */
+  function applyBackgroundVariant() {
+    var match = /[?&]bg=([^&#]*)/.exec(window.location.search);
+    var variant = match ? decodeURIComponent(match[1]).toUpperCase() : '';
+
+    if (VARIANTS.indexOf(variant) !== -1) {
+      document.body.setAttribute('data-bg', variant);
+    }
+  }
+
+  applyBackgroundVariant();
+
   /* --------------------------------------------------------------- DOM --- */
 
   var card = document.getElementById('em-card');

@@ -9,7 +9,10 @@
   --em-bg-3: #0d0d2b;
   --em-gold: #f1d55e;
   --em-muted: rgba(255, 255, 255, 0.72);
-  --em-edge: 8px;            /* marge logo: 8px van boven en rechts */
+  --em-edge: 16px;           /* logo: 16px van boven en rechts */
+  /* Teksten: 25px rechts zodra het scherm breder is dan ~417px,
+     op smallere schermen schaalt het mee met een harde ondergrens van 8px. */
+  --em-text-pad: min(25px, max(8px, 6vw));
   --em-font: "Roboto", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
 }
 
@@ -31,17 +34,87 @@ body {
   min-height: 100vh;
   min-height: 100dvh;
   margin: 0;
-  padding: var(--em-edge);
+  padding: var(--em-edge) var(--em-text-pad) var(--em-edge) var(--em-edge);
   font-family: var(--em-font);
   color: #fff;
   text-align: right;
-  background: radial-gradient(
-      circle at 50% 0%,
-      var(--em-bg-1) 0%,
-      var(--em-bg-2) 42%,
-      var(--em-bg-3) 100%
-    )
-    fixed;
+  background-color: var(--em-bg-3);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+/* ==================== Achtergrondvarianten ==============================
+   Kies een variant met het data-bg attribuut op <body>:
+     <body data-bg="A">   zachte fade (standaard)
+     <body data-bg="B">   blauwe duotone
+     <body data-bg="C">   split: beeld links, effen blauw rechts
+     <body data-bg="D">   vignet rechtsonder
+   De afbeelding is background-clean: de ingebakken tekst en het logo
+   zijn eruit gehaald, zodat onze eigen copy de enige tekst is.
+   ======================================================================= */
+
+/* A - Zachte fade: ongewijzigd beeld links, diep donkerblauw rechts. */
+body[data-bg="A"] {
+  background-image:
+    radial-gradient(
+      120% 90% at 88% 78%,
+      rgba(13, 13, 43, 0.55) 0%,
+      rgba(13, 13, 43, 0) 60%
+    ),
+    linear-gradient(
+      to right,
+      rgba(13, 13, 43, 0) 26%,
+      rgba(13, 13, 43, 0.94) 68%
+    ),
+    url("../images/background-clean.jpg");
+  background-size: cover, cover, cover;
+  background-position: center, center, center;
+}
+
+/* B - Blauwe duotone: hele beeld in een blauw waas, extra donker rechts. */
+body[data-bg="B"] {
+  background-image:
+    linear-gradient(rgba(16, 26, 74, 0.57), rgba(16, 26, 74, 0.57)),
+    linear-gradient(
+      to right,
+      rgba(13, 13, 43, 0) 30%,
+      rgba(13, 13, 43, 0.62) 100%
+    ),
+    url("../images/background-clean.jpg");
+  background-size: cover, cover, cover;
+  background-position: center, center, center;
+}
+
+/* C - Split: beeld links, harde overgang naar effen donkerblauw rechts. */
+body[data-bg="C"] {
+  background-image:
+    linear-gradient(
+      to right,
+      rgba(13, 13, 43, 0) 0%,
+      rgba(13, 13, 43, 0) 54%,
+      var(--em-bg-3) 62%
+    ),
+    url("../images/background-clean.jpg");
+  background-size: cover, auto 100%;
+  background-position: center, left center;
+}
+
+/* D - Vignet rechtsonder: beeld blijft zichtbaar, teksthoek wordt donker. */
+body[data-bg="D"] {
+  background-image:
+    radial-gradient(
+      150% 130% at 102% 92%,
+      rgba(13, 13, 43, 0.92) 0%,
+      rgba(13, 13, 43, 0) 62%
+    ),
+    linear-gradient(
+      to right,
+      rgba(13, 13, 43, 0) 30%,
+      rgba(13, 13, 43, 0.42) 95%
+    ),
+    url("../images/background-clean.jpg");
+  background-size: cover, cover, cover;
+  background-position: center, center, center;
 }
 
 /* --------------------------------------------------------------- logo ---- */
