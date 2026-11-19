@@ -5,34 +5,33 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>EuroMillions &ndash; volgende trekking</title>
   <meta name="description" content="Datum en jackpot van de volgende EuroMillions-trekking.">
+
+  <!-- Roboto -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-  <main class="em-card" id="em-card" data-state="loading" aria-live="polite">
+  <!-- Logo, 8px van rechts en 8px van boven -->
+  <img class="em-logo" src="images/logoEumColor.svg" alt="EuroMillions" width="120" height="74">
 
-    <!-- decoratieve sterren (geen afbeelding nodig) -->
-    <div class="em-card__stars" aria-hidden="true"></div>
+  <main class="em" id="em-card" data-state="loading" aria-live="polite">
 
-    <p class="em-card__game">EuroMillions</p>
+    <!-- Regel 1: "vrijdag 20 november" (uit drawdate) -->
+    <p class="em__date" id="em-date">&nbsp;</p>
 
-    <!-- Datum: "donderdag 9 november" -->
-    <p class="em-card__date" id="em-date">&nbsp;</p>
+    <!-- Regel 2: "Jackpot van" + estimatedjackpotprefix -->
+    <p class="em__label" id="em-label">&nbsp;</p>
 
-    <div class="em-card__jackpot">
-      <!-- "Jackpot van " + estimatedjackpotprefix -->
-      <p class="em-card__label" id="em-label">&nbsp;</p>
-      <!-- "€ 37.000.000" -->
-      <p class="em-card__amount" id="em-amount">&nbsp;</p>
-    </div>
-
-    <!-- Juridische vermelding uit de API -->
-    <p class="em-card__legal" id="em-legal" hidden></p>
+    <!-- Regel 3: jackpot in sprite-font, bv. € 37.000.000 -->
+    <p class="em__jackpot" id="em-jackpot"></p>
 
     <!-- Foutmelding / draw break -->
-    <p class="em-card__status" id="em-status" role="status" hidden></p>
-
-    <button class="em-card__retry" id="em-retry" type="button" hidden>Opnieuw proberen</button>
+    <p class="em__status" id="em-status" role="status" hidden></p>
+    <button class="em__retry" id="em-retry" type="button" hidden>Opnieuw proberen</button>
 
   </main>
 

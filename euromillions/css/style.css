@@ -1,18 +1,16 @@
 /* ==========================================================================
-   EuroMillions – volgende trekking (jackpot + drawdate)
+   EuroMillions – volgende trekking
+   Datum + jackpot (jackpot in gouden ballon-sprite)
    ========================================================================== */
 
 :root {
-  --em-blue: #1a1a4e;
-  --em-blue-deep: #0d0d2b;
-  --em-yellow: #ffd100;
-  --em-red: #e31d0a;
-  --em-white: #ffffff;
+  --em-bg-1: #232366;
+  --em-bg-2: #1a1a4e;
+  --em-bg-3: #0d0d2b;
+  --em-gold: #f1d55e;
   --em-muted: rgba(255, 255, 255, 0.72);
-  --em-radius: 18px;
-  --em-pad: clamp(20px, 5vw, 44px);
-  --em-font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
-    Arial, sans-serif;
+  --em-edge: 8px;            /* marge logo: 8px van boven en rechts */
+  --em-font: "Roboto", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
 }
 
 *,
@@ -27,206 +25,197 @@ html {
 
 body {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-end;      /* alles rechts uitlijnen */
   justify-content: center;
   min-height: 100vh;
   min-height: 100dvh;
   margin: 0;
-  padding: 16px;
+  padding: var(--em-edge);
   font-family: var(--em-font);
-  color: var(--em-white);
+  color: #fff;
+  text-align: right;
   background: radial-gradient(
       circle at 50% 0%,
-      #232366 0%,
-      var(--em-blue) 42%,
-      var(--em-blue-deep) 100%
+      var(--em-bg-1) 0%,
+      var(--em-bg-2) 42%,
+      var(--em-bg-3) 100%
     )
     fixed;
 }
 
-/* --------------------------------------------------------------- card ---- */
+/* --------------------------------------------------------------- logo ---- */
 
-.em-card {
-  position: relative;
-  width: 100%;
-  max-width: 620px;
-  padding: var(--em-pad);
-  overflow: hidden;
-  text-align: center;
-  background: rgba(0, 0, 0, 0.28);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: var(--em-radius);
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.42);
+/* Rechtsboven, exact 8px van rechts en 8px van boven. */
+.em-logo {
+  position: fixed;
+  top: var(--em-edge);
+  right: var(--em-edge);
+  display: block;
+  width: clamp(72px, 12vw, 120px);
+  height: auto;
 }
 
-/* Decoratieve sterren, puur CSS zodat er geen beeldbestanden nodig zijn. */
-.em-card__stars {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0.5;
-  background-image:
-    radial-gradient(2px 2px at 12% 18%, var(--em-yellow), transparent 60%),
-    radial-gradient(2px 2px at 78% 12%, var(--em-white), transparent 60%),
-    radial-gradient(1.5px 1.5px at 32% 78%, var(--em-white), transparent 60%),
-    radial-gradient(1.5px 1.5px at 88% 66%, var(--em-yellow), transparent 60%),
-    radial-gradient(1.5px 1.5px at 62% 34%, var(--em-white), transparent 60%),
-    radial-gradient(1.5px 1.5px at 22% 52%, var(--em-yellow), transparent 60%);
+/* ----------------------------------------------------------- teksten ----- */
+
+/* Geen kader: alleen de tekst, rechts uitgelijnd. */
+.em {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  max-width: 100%;
 }
 
-.em-card > *:not(.em-card__stars) {
-  position: relative;
-  z-index: 1;
+/* Regel 1: "vrijdag 20 november" */
+.em__date {
+  margin: 0 0 6px;
+  font-size: clamp(1.25rem, 4vw, 2rem);
+  font-weight: 700;
+  line-height: 1.2;
+  text-wrap: balance;
 }
 
-/* Laad-indicator: alleen zichtbaar zolang de fetch loopt. */
-.em-card[data-state="loading"] .em-card__date,
-.em-card[data-state="loading"] .em-card__label,
-.em-card[data-state="loading"] .em-card__amount {
+.em__date::first-letter {
+  text-transform: uppercase;
+}
+
+/* Regel 2: "Jackpot van zo'n" */
+.em__label {
+  margin: 0 0 10px;
+  font-size: clamp(0.95rem, 2.4vw, 1.15rem);
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--em-muted);
+}
+
+/* ================= Regel 3: jackpot als sprite-font (ballonnen) ==========
+   De sprite is 1390 x 140 met 15 glyphs die elkaar raken:
+     .(0,30) 1(30,65) 8(95,91) 6(186,93) 9(279,92) 3(371,93) 5(464,97)
+     4(561,98) 2(659,101) 0(760,103) 7(863,105) €(968,130)
+   Elke glyph is een leeg element met de sprite als achtergrond.
+   --h is de glyph-hoogte; alle maten schalen mee via  h/140.
+   ======================================================================== */
+
+.em__jackpot {
+  --h: clamp(26px, 7.5vw, 56px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  flex-wrap: nowrap;
+  gap: calc(var(--h) * 0.02);
+  margin: 0;
+  line-height: 0;
+}
+
+.em__jackpot .g {
+  display: block;
+  flex: 0 0 auto;
+  width: calc(var(--w) * var(--h) / 140);
+  height: var(--h);
+  background-image: url("../images/css_sprites.png");
+  background-image: image-set(
+    url("../images/css_sprites.webp") type("image/webp"),
+    url("../images/css_sprites.png") type("image/png")
+  );
+  background-repeat: no-repeat;
+  background-size: auto 100%;
+  background-position: calc(-1 * var(--x) * var(--h) / 140) 0;
+}
+
+/* Spatie tussen het euroteken en het bedrag: geen sprite, alleen ruimte. */
+.em__jackpot .g--space {
+  width: calc(26 * var(--h) / 140);
+  background-image: none;
+}
+
+/* ---------------------------------------------------------- glyph-data --- */
+
+.g--dot   { --x: 0;   --w: 30;  }
+.g--1     { --x: 30;  --w: 65;  }
+.g--8     { --x: 95;  --w: 91;  }
+.g--6     { --x: 186; --w: 93;  }
+.g--9     { --x: 279; --w: 92;  }
+.g--3     { --x: 371; --w: 93;  }
+.g--5     { --x: 464; --w: 97;  }
+.g--4     { --x: 561; --w: 98;  }
+.g--2     { --x: 659; --w: 101; }
+.g--0     { --x: 760; --w: 103; }
+.g--7     { --x: 863; --w: 105; }
+.g--euro  { --x: 968; --w: 130; }
+
+/* ------------------------------------------------------------ status ----- */
+
+.em__status {
+  margin: 12px 0 0;
+  font-size: 0.9rem;
+  font-weight: 500;
+  line-height: 1.5;
+  color: #ff8a7a;
+}
+
+/* Bij een fout of draw break geen datum/jackpot tonen. */
+.em[data-state="error"] .em__date,
+.em[data-state="error"] .em__label,
+.em[data-state="error"] .em__jackpot,
+.em[data-state="break"] .em__date,
+.em[data-state="break"] .em__label,
+.em[data-state="break"] .em__jackpot {
+  display: none;
+}
+
+/* Laad-indicator. */
+.em[data-state="loading"] .em__date,
+.em[data-state="loading"] .em__label,
+.em[data-state="loading"] .em__jackpot {
   animation: em-pulse 1.4s ease-in-out infinite;
 }
 
 @keyframes em-pulse {
-  0%,
-  100% {
-    opacity: 0.35;
-  }
-  50% {
-    opacity: 0.85;
-  }
+  0%, 100% { opacity: 0.35; }
+  50%      { opacity: 0.85; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .em-card[data-state="loading"] .em-card__date,
-  .em-card[data-state="loading"] .em-card__label,
-  .em-card[data-state="loading"] .em-card__amount {
+  .em[data-state="loading"] .em__date,
+  .em[data-state="loading"] .em__label,
+  .em[data-state="loading"] .em__jackpot {
     animation: none;
     opacity: 0.5;
   }
 }
 
-/* --------------------------------------------------------------- tekst --- */
-
-.em-card__game {
-  margin: 0 0 18px;
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--em-yellow);
-}
-
-/* "donderdag 9 november" */
-.em-card__date {
-  margin: 0 0 20px;
-  font-size: clamp(1.35rem, 4.6vw, 2rem);
-  font-weight: 700;
-  line-height: 1.25;
-  text-wrap: balance;
-}
-
-/* Eerste letter van de weekdag hoofdletter, zoals "Donderdag". */
-.em-card__date::first-letter {
-  text-transform: uppercase;
-}
-
-.em-card__jackpot {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding-top: 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.15);
-}
-
-/* "Jackpot van zo'n" */
-.em-card__label {
-  margin: 0;
-  font-size: clamp(0.95rem, 2.8vw, 1.15rem);
-  font-weight: 600;
-  color: var(--em-muted);
-}
-
-/* "€ 37.000.000" */
-.em-card__amount {
-  margin: 0;
-  font-size: clamp(2rem, 9vw, 3.5rem);
-  font-weight: 800;
-  line-height: 1.05;
-  letter-spacing: -0.02em;
-  color: var(--em-yellow);
-  font-variant-numeric: tabular-nums;
-  overflow-wrap: break-word;
-}
-
-.em-card__legal {
-  margin: 18px 0 0;
-  font-size: 0.72rem;
-  line-height: 1.5;
-  color: var(--em-muted);
-  text-wrap: pretty;
-}
-
-/* ------------------------------------------------------------ status ----- */
-
-.em-card__status {
-  margin: 18px 0 0;
-  font-size: 0.9rem;
-  font-weight: 600;
-  line-height: 1.5;
-  color: var(--em-white);
-}
-
-.em-card[data-state="error"] .em-card__date,
-.em-card[data-state="error"] .em-card__jackpot,
-.em-card[data-state="break"] .em-card__date,
-.em-card[data-state="break"] .em-card__jackpot {
-  display: none;
-}
-
-.em-card[data-state="error"] .em-card__status,
-.em-card[data-state="break"] .em-card__status {
-  color: var(--em-red);
-  font-weight: 700;
-}
-
-.em-card[data-state="error"] .em-card__status {
-  color: #ff8a7a;
-}
-
 /* ------------------------------------------------------------- retry ----- */
 
-.em-card__retry {
-  margin-top: 20px;
-  padding: 12px 26px;
+.em__retry {
+  margin-top: 14px;
+  padding: 10px 22px;
   font: inherit;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 700;
-  color: var(--em-blue-deep);
+  color: var(--em-bg-3);
   cursor: pointer;
-  background: var(--em-yellow);
+  background: var(--em-gold);
   border: 0;
   border-radius: 999px;
-  transition: transform 0.15s ease, filter 0.15s ease;
+  transition: filter 0.15s ease, transform 0.15s ease;
 }
 
-.em-card__retry:hover {
+.em__retry:hover {
   filter: brightness(1.08);
 }
 
-.em-card__retry:active {
+.em__retry:active {
   transform: scale(0.97);
 }
 
-.em-card__retry:focus-visible {
-  outline: 3px solid var(--em-white);
+.em__retry:focus-visible {
+  outline: 3px solid #fff;
   outline-offset: 3px;
 }
 
 .em-noscript {
-  max-width: 480px;
-  margin: 24px auto;
+  margin: 16px;
   font-family: var(--em-font);
   font-size: 0.9rem;
-  color: var(--em-white);
-  text-align: center;
+  color: #fff;
 }

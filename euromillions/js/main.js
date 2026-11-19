@@ -24,8 +24,7 @@
   var card = document.getElementById('em-card');
   var elDate = document.getElementById('em-date');
   var elLabel = document.getElementById('em-label');
-  var elAmount = document.getElementById('em-amount');
-  var elLegal = document.getElementById('em-legal');
+  var elJackpot = document.getElementById('em-jackpot');
   var elStatus = document.getElementById('em-status');
   var elRetry = document.getElementById('em-retry');
 
@@ -153,6 +152,59 @@
     return clean ? 'Jackpot van ' + clean : 'Jackpot van';
   }
 
+  /* --------------------------------------------------- sprite-glyphs ----- */
+
+  /**
+   * Koppelt elk teken aan zijn glyph-klasse uit de sprite (css_sprites.png).
+   * De sprite bevat 15 glyphs: . 1 8 6 9 3 5 4 2 0 7 €
+   * Ontbrekende tekens (bv. een letter) worden overgeslagen.
+   */
+  var GLYPHS = {
+    '.': 'g--dot',
+    '0': 'g--0',
+    '1': 'g--1',
+    '2': 'g--2',
+    '3': 'g--3',
+    '4': 'g--4',
+    '5': 'g--5',
+    '6': 'g--6',
+    '7': 'g--7',
+    '8': 'g--8',
+    '9': 'g--9',
+    '\u20AC': 'g--euro',   // €
+    ' ': 'g--space'
+  };
+
+  /**
+   * Zet een tekst om in sprite-glyphs.
+   * Elke glyph is een leeg <span>; de CSS zet de juiste sprite-uitsnede.
+   * @param {string} text bv. "€ 37.000.000"
+   * @param {HTMLElement} target het element dat gevuld wordt
+   */
+  function renderSpriteText(text, target) {
+    // Eerst leegmaken (textContent wist ook eventuele vorige glyphs).
+    target.textContent = '';
+
+    var fragment = document.createDocumentFragment();
+
+    for (var i = 0; i < text.length; i++) {
+      var cls = GLYPHS[text.charAt(i)];
+
+      // Teken niet in de sprite (bv. letters): overslaan.
+      if (!cls) {
+        continue;
+      }
+
+      var span = document.createElement('span');
+      span.className = 'g ' + cls;
+      // Decoratief: de tekst staat als aria-label op het bovenliggende element.
+      span.setAttribute('aria-hidden', 'true');
+      fragment.appendChild(span);
+    }
+
+    target.appendChild(fragment);
+  }
+
   /* ------------------------------------------------------ API-aanroep --- */
 
   /**
@@ -195,20 +247,19 @@
 
     elDate.textContent = dateText || 'Datum onbekend';
     elLabel.textContent = buildJackpotLabel(maindraw.estimatedjackpotprefix);
-    // Euroteken vóór het bedrag, met een vaste spatie erna: "€ 37.000.000"
-    elAmount.textContent = amountText ? '\u20AC\u00A0' + amountText : 'Bedrag onbekend';
 
-    // Juridische vermelding is verplicht wanneer de API die aanlevert.
-    var legal = maindraw.islegalmentionneeded === false
-      ? ''
-      : (maindraw.legalmention || '').trim();
-
-    if (legal) {
-      elLegal.textContent = legal;
-      elLegal.hidden = false;
+    // Regel 3: het euroteken vóór het bedrag, met een spatie ertussen.
+    // In de sprite-font worden dit losse glyphs: € 3 7 . 0 0 0 . 0 0 0
+    if (amountText) {
+      var full = '\u20AC ' + amountText;
+      renderSpriteText(full, elJackpot);
+      // Voor screenreaders en als de sprite niet laadt.
+      elJackpot.setAttribute('aria-label', 'Jackpot: ' + full);
+      elJackpot.setAttribute('role', 'img');
     } else {
-      elLegal.textContent = '';
-      elLegal.hidden = true;
+      elJackpot.textContent = 'Bedrag onbekend';
+      elJackpot.removeAttribute('aria-label');
+      elJackpot.removeAttribute('role');
     }
   }
 
@@ -220,8 +271,9 @@
 
     elDate.textContent = '\u00A0';
     elLabel.textContent = '\u00A0';
-    elAmount.textContent = '\u00A0';
-    elLegal.hidden = true;
+    elJackpot.textContent = '';
+    elJackpot.removeAttribute('aria-label');
+    elJackpot.removeAttribute('role');
 
     fetchNextDraw()
       .then(function (data) {
