@@ -11,13 +11,58 @@
 
   /* ------------------------------------------------------------ config --- */
 
-  var API_URL = 'https://lonalo.enco.io/lonalo/nextdraw/1.2.0/Elot?language=nl';
+  /* De taal komt uit <html lang="…">. Elk HTML-bestand bepaalt dus zijn eigen
+     taal en de drie pagina's (nl / fr / de) delen deze ene JS-file. */
+  var LANG = (document.documentElement.getAttribute('lang') || 'nl')
+    .toLowerCase()
+    .slice(0, 2);
+
+  var API_BASE = 'https://lonalo.enco.io/lonalo/nextdraw/1.2.0/Elot';
 
   // De originele banner breekt af na 1000 ms. Voor mobiel eerste-byte is dat
   // te krap, dus we nemen ruimer de tijd.
   var TIMEOUT_MS = 5000;
 
-  var LOCALE = 'nl-BE';                 // nl-BE en nl-NL geven beide "37.000.000"
+  /* Teksten en getalnotatie per taal. De API kent ?language=nl|fr|de. */
+  var I18N = {
+    nl: {
+      locale: 'nl-BE',
+      label: 'Jackpot van',
+      dateUnknown: 'Datum onbekend',
+      amountUnknown: 'Bedrag onbekend',
+      breakMsg: 'Er is momenteel geen actieve EuroMillions-trekking gepland. ' +
+                'Probeer het later opnieuw.',
+      errorMsg: 'De gegevens van de volgende trekking konden niet worden geladen.'
+    },
+    fr: {
+      locale: 'fr-BE',
+      label: 'Jackpot de',
+      dateUnknown: 'Date inconnue',
+      amountUnknown: 'Montant inconnu',
+      breakMsg: 'Aucun tirage EuroMillions n\u2019est programmé pour le moment. ' +
+                'Réessayez plus tard.',
+      errorMsg: 'Les données du prochain tirage n\u2019ont pas pu être chargées.'
+    },
+    de: {
+      locale: 'de-BE',
+      label: 'Jackpot von',
+      // De API-prefix is voor het Duits "um die", wat achter "von" niet werkt
+      // ("Jackpot von um die 37.000.000"). Daarom gebruiken we onze eigen
+      // vertaling "etwa": "Jackpot von etwa", en enkel als de API-prefix
+      // gevuld is. Is die leeg (exacte jackpot), dan blijft het "Jackpot von".
+      prefixOverride: 'etwa',
+      dateUnknown: 'Datum unbekannt',
+      amountUnknown: 'Betrag unbekannt',
+      breakMsg: 'Derzeit ist keine aktive EuroMillions-Ziehung geplant. ' +
+                'Versuchen Sie es später erneut.',
+      errorMsg: 'Die Daten der nächsten Ziehung konnten nicht geladen werden.'
+    }
+  };
+
+  var CFG = I18N[LANG] || I18N.nl;
+
+  // Onbekende taal valt terug op Nederlands, ook voor de API-aanroep.
+  var API_URL = API_BASE + '?language=' + (I18N[LANG] ? LANG : 'nl');
 
   // Toegestane achtergrondvarianten (zie css/style.css).
   // Standaard A; test een andere met ?bg=B (of C / D) achter de URL.
@@ -127,8 +172,9 @@
   }
 
   /**
-   * "20/11/2026" -> "vrijdag 20 november"
-   * Intl levert de Nederlandse dagnamen en maandnamen aan.
+   * "20/11/2026" -> "vrijdag 20 november" / "vendredi 20 novembre" /
+   * "Freitag, 20. November"
+   * Intl levert de juiste dagnamen en maandnamen per taal aan.
    * De hoofdletter van de weekdag komt uit CSS (::first-letter).
    */
   function formatDrawDate(value) {
@@ -138,7 +184,7 @@
       return '';
     }
 
-    return new Intl.DateTimeFormat(LOCALE, {
+    return new Intl.DateTimeFormat(CFG.locale, {
       weekday: 'long',
       day: 'numeric',
       month: 'long'
@@ -146,8 +192,8 @@
   }
 
   /**
-   * 37000000 -> "37.000.000"
-   * Punt als duizendtallen-scheider, geen decimalen.
+   * 37000000 -> "37.000.000" (nl/de) of "37 000 000" (fr)
+   * Geen decimalen; het scheidingsteken komt uit de locale.
    */
   function formatAmount(value) {
     var number = Number(value);
@@ -156,7 +202,7 @@
       return '';
     }
 
-    return new Intl.NumberFormat(LOCALE, {
+    return new Intl.NumberFormat(CFG.locale, {
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
       useGrouping: true
@@ -164,13 +210,39 @@
   }
 
   /**
-   * Bouwt de regel "Jackpot van zo'n" op basis van estimatedjackpotprefix.
-   * Bij een lege of ontbrekende prefix blijft het bij "Jackpot van".
+   * Frans groepeert met U+202F (smalle vaste spatie) of U+00A0.
+   * Die tekens bestaan niet in de sprite, dus voor de sprite-weergave
+   * zetten we ze om naar een gewone spatie. Het zichtbare resultaat
+   * blijft "37 000 000"; het aria-label houdt de nette Intl-notatie.
+   */
+  function toSpriteAmount(text) {
+    return text.replace(/[\u202F\u00A0\u2009]/g, ' ');
+  }
+
+  /**
+   * Bouwt regel 2 op basis van estimatedjackpotprefix.
+   *
+   * nl: "Jackpot van" + "zo'n"    -> "Jackpot van zo'n"
+   * fr: "Jackpot de"  + "près de"  -> "Jackpot de près de"
+   * de: "Jackpot von" + "etwa"     -> "Jackpot von etwa"
+   *     (de API-prefix is daar "um die", wat achter "von" niet werkt, dus
+   *      we vervangen hem door onze eigen vertaling via prefixOverride)
+   *
+   * Is de prefix leeg of ontbreekt hij, dan blijft het bij het label alleen:
+   * "Jackpot van" / "Jackpot de" / "Jackpot von".
    */
   function buildJackpotLabel(prefix) {
     var clean = typeof prefix === 'string' ? prefix.trim() : '';
 
-    return clean ? 'Jackpot van ' + clean : 'Jackpot van';
+    // Niets te melden: alleen het label.
+    if (!clean) {
+      return CFG.label;
+    }
+
+    // Taal waarbij de API-prefix grammaticaal niet past: eigen tekst gebruiken.
+    var shown = CFG.prefixOverride || clean;
+
+    return CFG.label + ' ' + shown;
   }
 
   /* --------------------------------------------------- sprite-glyphs ----- */
@@ -266,19 +338,21 @@
     var dateText = formatDrawDate(event.drawdate);
     var amountText = formatAmount(maindraw.jackpot);
 
-    elDate.textContent = dateText || 'Datum onbekend';
+    elDate.textContent = dateText || CFG.dateUnknown;
     elLabel.textContent = buildJackpotLabel(maindraw.estimatedjackpotprefix);
 
     // Regel 3: het euroteken vóór het bedrag, met een spatie ertussen.
     // In de sprite-font worden dit losse glyphs: € 3 7 . 0 0 0 . 0 0 0
     if (amountText) {
       var full = '\u20AC ' + amountText;
-      renderSpriteText(full, elJackpot);
-      // Voor screenreaders en als de sprite niet laadt.
-      elJackpot.setAttribute('aria-label', 'Jackpot: ' + full);
+      // De sprite kent alleen '.' en ' ' als scheidingsteken, dus Frans
+      // (smalle vaste spatie) wordt voor de weergave omgezet.
+      renderSpriteText('\u20AC ' + toSpriteAmount(amountText), elJackpot);
+      // Voor screenreaders en als de sprite niet laadt: de nette notatie.
+      elJackpot.setAttribute('aria-label', CFG.label + ': ' + full);
       elJackpot.setAttribute('role', 'img');
     } else {
-      elJackpot.textContent = 'Bedrag onbekend';
+      elJackpot.textContent = CFG.amountUnknown;
       elJackpot.removeAttribute('aria-label');
       elJackpot.removeAttribute('role');
     }
@@ -303,10 +377,7 @@
         // Lege of ontbrekende lijst = geen actieve trekking (draw break).
         if (!Array.isArray(events) || events.length === 0) {
           setState('break');
-          showStatus(
-            'Er is momenteel geen actieve EuroMillions-trekking gepland. Probeer het later opnieuw.',
-            true
-          );
+          showStatus(CFG.breakMsg, true);
           return;
         }
 
@@ -315,10 +386,7 @@
       })
       .catch(function (error) {
         setState('error');
-        showStatus(
-          'De gegevens van de volgende trekking konden niet worden geladen.',
-          true
-        );
+        showStatus(CFG.errorMsg, true);
         // Detail enkel in de console, niet op de pagina.
         if (window.console && console.error) {
           console.error('EuroMillions nextdraw mislukt:', error);
